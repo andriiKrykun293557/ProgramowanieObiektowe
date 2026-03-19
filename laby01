@@ -1,1 +1,75 @@
+#include <iostream>
 
+using namespace std;
+
+int N=3;
+
+string dodajOsobe(string *tabNazwisko, string nazwisko, int *tabIndeks, int indeks,
+string *tabImie, string imie)
+{
+    for(int i=0; i<N;i++)
+    {
+        if(tabNazwisko[i]=="")
+        {
+            tabNazwisko[i]=nazwisko;
+            tabIndeks[i]=indeks;
+            tabImie[i]=imie;
+        }
+    }
+    return nazwisko;
+
+}
+
+bool ustawObecnosc(string *tabNazwisko, bool *tabObecnosc, string nazwisko, bool obecnosc)
+{
+    for(int i=0;i<N;i++)
+    {
+        if(tabNazwisko[i]==nazwisko)
+        {
+            tabObecnosc[i]=obecnosc;
+        }
+    }
+    return obecnosc;
+}
+
+string drukujListe(string *tabNazwisko,bool *tabObecnosc, int *tabIndeks, string *tabImie)
+{
+    for (int i=0;i<N;i++)
+    {
+        cout<<tabIndeks[i]<<" || "<<tabImie[i]<<" || "<<tabNazwisko[i]<<" || "<<tabObecnosc[i]<<endl;
+    }
+   
+    return 0;
+}
+
+int main()
+{
+    int tabIndeks[N];
+    int indeks;
+   
+    string tabImie[N];
+    string imie;
+   
+    string tabNazwisko[N];
+    string nazwisko;
+   
+    bool tabObecnosc[N];
+    bool obecnosc;
+   
+    cout<<"podaj: "<<endl;
+    cin>>nazwisko;
+    cout<<"indeks: "<<endl;
+    cin>>indeks;
+    cout<<"podaj imie: "<<endl;
+    cin>>imie;
+    dodajOsobe(tabNazwisko, nazwisko, tabIndeks, indeks, tabImie, imie);
+   
+    cout<<"ustaw obecnosc: "<<endl;
+    cin>>obecnosc;
+    ustawObecnosc(tabNazwisko, tabObecnosc, nazwisko, obecnosc);
+   
+    drukujListe(tabNazwisko, tabObecnosc, tabIndeks, tabImie);
+   
+
+    return 0;
+}
