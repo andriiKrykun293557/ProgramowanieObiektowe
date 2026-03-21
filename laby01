@@ -2,22 +2,14 @@
 
 using namespace std;
 
-int N=3;
+const int N=3;
 
-string dodajOsobe(string *tabNazwisko, string nazwisko, int *tabIndeks, int indeks,
-string *tabImie, string imie)
+void dodajOsobe(string *tabNazwisko, string nazwisko, int *tabIndeks, int indeks,
+string *tabImie, string imie, int i)
 {
-    for(int i=0; i<N;i++)
-    {
-        if(tabNazwisko[i]=="")
-        {
-            tabNazwisko[i]=nazwisko;
-            tabIndeks[i]=indeks;
-            tabImie[i]=imie;
-        }
-    }
-    return nazwisko;
-
+    tabNazwisko[i]=nazwisko;
+    tabIndeks[i]=indeks;
+    tabImie[i]=imie;
 }
 
 bool ustawObecnosc(string *tabNazwisko, bool *tabObecnosc, string nazwisko, bool obecnosc)
@@ -32,44 +24,143 @@ bool ustawObecnosc(string *tabNazwisko, bool *tabObecnosc, string nazwisko, bool
     return obecnosc;
 }
 
-string drukujListe(string *tabNazwisko,bool *tabObecnosc, int *tabIndeks, string *tabImie)
+void drukujListe(string *tabNazwisko,bool *tabObecnosc, int *tabIndeks, string *tabImie)
 {
     for (int i=0;i<N;i++)
     {
         cout<<tabIndeks[i]<<" || "<<tabImie[i]<<" || "<<tabNazwisko[i]<<" || "<<tabObecnosc[i]<<endl;
     }
    
-    return 0;
+}
+
+void edytujOsobe(string *tabNazwisko, int *tabIndeks,
+string *tabImie,bool *tabObecnosc, string edytuj)
+{
+    for(int i=0; i<N; i++)
+    {
+        if (tabNazwisko[i]==edytuj)
+        {
+            cout<<"podaj nowe dane: "<<endl;
+            
+            cout<<"podaj indeks: "<<endl;
+            cin>>tabIndeks[i];
+
+            cout<<"podaj imie: "<<endl;
+            cin>>tabImie[i];
+
+            cout<<"podaj nazwisko: "<<endl;
+            cin>>tabNazwisko[i];
+
+            cout<<"ustaw obecnosc: "<<endl;
+            cin>>tabObecnosc[i];
+            
+            return;
+        }
+    }
+    cout<<"nie znaleziono osoby o takim nazwisku!"<<endl;
+}
+
+void usunOsobe(string *tabNazwisko, int *tabIndeks,
+string *tabImie,bool *tabObecnosc, string edytuj)
+{
+    for(int i=0; i<N; i++)
+    {
+        if (tabNazwisko[i]==edytuj)
+        {
+                for(int j=i; j<N-1;j++)
+                {
+                    tabIndeks[j]=tabIndeks[j+1];
+                    tabImie[j]=tabImie[j+1];
+                    tabNazwisko[j]=tabNazwisko[j+1];
+                    tabObecnosc[j]=tabObecnosc[j+1];
+                }
+                tabIndeks[N-1]=0;
+                tabImie[N-1]="";
+                tabNazwisko[N-1]="";
+                tabObecnosc[N-1]=0;
+                return;
+                
+                cout<<"osoba o nazwisku "<<edytuj<<" zostala usunieta"<<endl;
+                return;
+        }
+    }
 }
 
 int main()
 {
-    int tabIndeks[N];
+    int tabIndeks[N]={0};
     int indeks;
    
-    string tabImie[N];
+    string tabImie[N]={" "};
     string imie;
    
-    string tabNazwisko[N];
+    string tabNazwisko[N]={" "};
     string nazwisko;
    
-    bool tabObecnosc[N];
+    bool tabObecnosc[N]={0};
     bool obecnosc;
-   
-    cout<<"podaj: "<<endl;
-    cin>>nazwisko;
-    cout<<"indeks: "<<endl;
-    cin>>indeks;
-    cout<<"podaj imie: "<<endl;
-    cin>>imie;
-    dodajOsobe(tabNazwisko, nazwisko, tabIndeks, indeks, tabImie, imie);
-   
-    cout<<"ustaw obecnosc: "<<endl;
-    cin>>obecnosc;
-    ustawObecnosc(tabNazwisko, tabObecnosc, nazwisko, obecnosc);
-   
-    drukujListe(tabNazwisko, tabObecnosc, tabIndeks, tabImie);
-   
-
+    
+    bool menu=true;
+    int wybor;
+    string edytuj;
+    
+    cout<<"Witaj w menu!"<<endl;
+    
+    while(menu)
+    {
+        cout<<"wybierz co chcesz zrobic: 1 - dodaj osoby i ich obecnosc, 2 - edytuj dane osoby, 3 - usun osobe, 4 - opusc program"<<endl;
+        cin>>wybor;
+        switch(wybor)
+        {
+            case 1:
+            {
+                for (int i=0;i<N;i++)
+                {
+                    cout<<"wpisujesz osobe nr: "<<i+1<<endl;
+                    cout<<"podaj indeks: "<<endl;
+                    cin>>indeks;
+                    cout<<"podaj imie: "<<endl;
+                    cin>>imie;
+                    cout<<"podaj nazwisko: "<<endl;
+                    cin>>nazwisko;
+                    dodajOsobe(tabNazwisko, nazwisko, tabIndeks, indeks, tabImie, imie, i);
+        
+                    cout<<"ustaw obecnosc: "<<endl;
+                    cin>>obecnosc;
+                    ustawObecnosc(tabNazwisko, tabObecnosc, nazwisko, obecnosc);
+                }
+                drukujListe(tabNazwisko, tabObecnosc, tabIndeks, tabImie);
+                break;
+            }
+            
+            case 2:
+            {
+                cout<<"podaj nazwisko osoby do edycji danych: "<<endl;
+                cin>>edytuj;
+                edytujOsobe(tabNazwisko, tabIndeks,
+                 tabImie, tabObecnosc,  edytuj);
+                drukujListe(tabNazwisko, tabObecnosc, tabIndeks, tabImie);
+                break;
+            }
+            
+            case 3:
+            {
+                cout<<"podaj nazwisko osoby, ktorej dane chcesz usunac: "<<endl;
+                cin>>edytuj;
+                usunOsobe( tabNazwisko,  tabIndeks,
+                 tabImie, tabObecnosc,  edytuj);
+                drukujListe(tabNazwisko, tabObecnosc, tabIndeks, tabImie);
+                break;
+            }
+            
+            default: 
+            {
+                cout<<"wylaczanie programu"<<endl;
+                menu=false;
+                break;
+            }
+        }
+    }
+    
     return 0;
 }
