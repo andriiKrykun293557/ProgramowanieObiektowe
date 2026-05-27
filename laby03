@@ -1,0 +1,335 @@
+#include <iostream>
+ 
+using namespace std;
+ 
+const int N=3;
+ 
+//klasa osoby
+class Osoba
+{
+    private:
+        int klasa_indeks;
+        string klasa_imie;
+        string klasa_nazwisko;
+   
+    public:
+        Osoba(int id=0, string im="", string nazw="") : klasa_indeks(id), klasa_imie(im), klasa_nazwisko(nazw){};
+    
+        void setIndeks(int nowy_indeks) {klasa_indeks=nowy_indeks;};
+        void setImie(string nowe_imie) { klasa_imie=nowe_imie;};
+        void setNazwisko(string nowe_nazwisko) {klasa_nazwisko=nowe_nazwisko;};
+        
+        int getIndeks() {return klasa_indeks;}
+        string getImie() {return klasa_imie;}
+        string getNazwisko() {return klasa_nazwisko; }
+};
+ 
+//klasa obecnosci 
+class ListaObecnosci
+{
+    private:
+        Osoba tabOsoba[N];
+        bool tabObecnosc[N];
+        
+        int znajdzPustke()
+        {
+            for (int i=0;i<N;i++)
+            {
+                if (tabOsoba[i].getNazwisko()=="")
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        
+        int znajdzNazwisko(string klasa_nazwisko)
+        {
+            for (int i=0; i<N; i++)
+            {
+                if (tabOsoba[i].getNazwisko()==klasa_nazwisko)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    
+    public:
+        ListaObecnosci()
+        {
+            for (int i=0; i<N; i++)
+            {
+                tabObecnosc[i]=false;
+            }
+        }
+        
+        void dodajOsobe(Osoba nowa_osoba)
+        {
+            int i=znajdzPustke();
+            if (i!=-1)
+            {
+                tabOsoba[i]=nowa_osoba;
+            }
+            else
+            {
+                cout<<"Brak miejsca w bazie!"<<endl;
+            }
+        }
+        
+        void ustawObecnosc(string nazwisko, bool obecnosc)
+        {
+            int i=znajdzNazwisko(nazwisko);
+            if (i!=-1)
+            {
+                tabObecnosc[i]=obecnosc;
+            }
+            else
+            {
+                cout<<"nie znaleziono osoby!"<<endl;
+            }
+        }
+
+        // NOWA METODA: Usuwanie osoby bezpośrednio z listy obecności
+        void usunOsobeZListy(string nazwisko)
+        {
+            int i = znajdzNazwisko(nazwisko);
+            if (i != -1)
+            {
+                tabOsoba[i] = Osoba();   // Reset obiektu Osoba do wartości domyślnych
+                tabObecnosc[i] = false;  // Reset obecności
+            }
+        }
+        
+        void drukujListe()
+        {
+            for (int i=0;i<N;i++)
+            {
+                if (tabOsoba[i].getNazwisko()!="")
+                {
+                    cout<<tabOsoba[i].getIndeks()<<" || "<<tabOsoba[i].getImie()<<" || "<<tabOsoba[i].getNazwisko()<<" || "<<tabObecnosc[i]<<endl;
+                }
+            }
+        }
+};
+ 
+//klasa interfrjs
+class UiUzyt
+{
+    private:
+        Osoba *tabOsoba;
+        ListaObecnosci *listaOsob;
+        int ileOsob;
+        int ileList;
+        
+        int znajdzPustke()
+        {
+            for (int i=0; i<ileOsob; i++)
+            {
+                if (tabOsoba[i].getNazwisko()=="")
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        
+        int znajdzNazwisko(string klasa_nazwisko)
+        {
+            for (int i=0; i<ileOsob; i++)
+            {
+                if (tabOsoba[i].getNazwisko()==klasa_nazwisko)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        
+        void dodajOsoby()
+        {
+            string imie, nazwisko;
+            int indeks;
+            for (int i=0; i<ileOsob; i++)
+            {
+                cout<<"wpisujesz osobe nr: "<<i+1<<endl;
+                cout<<"podaj indeks: "<<endl;
+                cin>>indeks;
+                cout<<"podaj imie: "<<endl;
+                cin>>imie;
+                cout<<"podaj nazwisko: "<<endl;
+                cin>>nazwisko;
+                Osoba nowa_osoba(indeks, imie, nazwisko);
+                int j=znajdzPustke();
+                if (j!=-1)
+                {
+                    tabOsoba[j]=nowa_osoba;
+                }
+                else
+                {
+                    cout<<"brak miejsca w bazie"<<endl;
+                    break;
+                }
+            }
+        }
+        
+        void edytujOsobe()
+        {
+            string nazwisko;
+            cout<<"podaj nazwisko osoby do edycji danych: "<<endl;
+            cin>>nazwisko;
+            
+            int i=znajdzNazwisko(nazwisko);
+            if (i!=-1)
+            {
+                int edytujIndeks;
+                string edytujImie, edytujNazw;
+                
+                cout<<"podaj indeks: "<<endl;
+                cin>>edytujIndeks;
+                
+                cout<<"podaj imie: "<<endl;
+                cin>>edytujImie;
+                
+                cout<<"podaj nazwisko: "<<endl;
+                cin>>edytujNazw;
+                
+                tabOsoba[i].setIndeks(edytujIndeks);
+                tabOsoba[i].setImie(edytujImie);
+                tabOsoba[i].setNazwisko(edytujNazw);
+            }
+            else
+            {
+                cout<<"nie znaleziono osoby o takim nazwisku!"<<endl;
+            }
+        }
+        
+        void usunOsobe()
+        {
+            string nazwisko;
+            cout<<"podaj nazwisko osoby, ktorej dane chcesz usunac: "<<endl;
+            cin>>nazwisko;
+            
+            int i=znajdzNazwisko(nazwisko);
+            if (i!=-1)
+            {
+                tabOsoba[i]=Osoba();
+                
+                for (int j=0; j<ileList; j++)
+                {
+                    listaOsob[j].usunOsobeZListy(nazwisko);
+                }
+                
+                cout<<"osoba zostala usunieta z bazy oraz list obecnosci"<<endl;
+            }
+            else
+            {
+                cout<<"nie znaleziono osoby o takim nazwisku w bazie!"<<endl;
+            }
+        }
+        
+        void dodajDoListy()
+        {
+            string nazwisko;
+            bool obecnosc;
+            int lista;
+            
+            cout<<"podaj nazwisko: "<<endl;
+            cin>>nazwisko;
+            cout<<"ustaw obecnosc: "<<endl;
+            cin>>obecnosc;
+            cout<<"wybierz liste (lista 1 lub lista 2): "<<endl;
+            cin>>lista;
+            
+            int i=znajdzNazwisko(nazwisko);
+            if (i!=-1)
+            {
+                if (lista==1)
+                {
+                    listaOsob[0].dodajOsobe(tabOsoba[i]);
+                    listaOsob[0].ustawObecnosc(tabOsoba[i].getNazwisko(), obecnosc);
+                }
+                else if (lista==2)
+                {
+                    listaOsob[1].dodajOsobe(tabOsoba[i]);
+                    listaOsob[1].ustawObecnosc(tabOsoba[i].getNazwisko(), obecnosc);
+                }
+            }
+            else
+            {
+                cout<<"nie znaleziono osoby o takim nazwisku!"<<endl;
+            }
+        }
+        
+        void wyswietlListy()
+        {
+            cout<<"lista 1:"<<endl;
+            listaOsob[0].drukujListe();
+            
+            cout<<"lista 2:"<<endl;
+            listaOsob[1].drukujListe();
+        }
+    
+    public:
+        UiUzyt(Osoba *tabOs, int ileOs, ListaObecnosci *listaOs, int Listy)
+            : tabOsoba(tabOs), ileOsob(ileOs), listaOsob(listaOs), ileList(Listy) {}
+        
+        void petla()
+        {
+            bool menu=true;
+            int wybor;
+            cout<<"Witaj w menu!"<<endl;
+            
+            while(menu)
+            {
+                cout<<"wybierz co chcesz zrobic: 1 - dodaj osoby, 2 - edytuj dane osoby, 3 - usun osobe, 4 - dodaj osobe do listy, 5 - wyswietl listy, 6 - opusc program"<<endl;
+                cin>>wybor;
+                switch(wybor)
+                {
+                    case 1:
+                    {
+                        dodajOsoby();
+                        break;
+                    }
+                    case 2:
+                    {
+                        edytujOsobe();
+                        break;
+                    }
+                    case 3:
+                    {
+                        usunOsobe();
+                        break;
+                    }
+                    case 4:
+                    {
+                        dodajDoListy();
+                        break;
+                    }
+                    case 5:
+                    {
+                        wyswietlListy();
+                        break;
+                    }
+                    default:
+                    {
+                        cout<<"wylaczanie programu"<<endl;
+                        menu=false;
+                        break;
+                    }
+                }
+            }
+        }
+};
+ 
+
+int main()
+{
+    Osoba tabOsoba[N];
+    ListaObecnosci listaOsob[2];
+    UiUzyt ui(tabOsoba,  N, listaOsob,2);
+    
+    ui.petla();
+    
+    return 0;
+}
