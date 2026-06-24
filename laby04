@@ -1,0 +1,318 @@
+#include <iostream>
+
+using namespace std;
+
+class Osoba
+{
+    protected:
+        int klasa_indeks;
+        string klasa_imie;
+        string klasa_nazwisko;
+       
+    public:
+        Osoba(int id=0, string im="", string nazw="") : klasa_indeks(id), klasa_imie(im), klasa_nazwisko(nazw){};
+        virtual ~Osoba() {}
+        
+        void setIndeks(int nowy_indeks) {klasa_indeks=nowy_indeks;};
+        void setImie(string nowe_imie) { klasa_imie=nowe_imie;};
+        void setNazwisko(string nowe_nazwisko) {klasa_nazwisko=nowe_nazwisko;};
+        
+        int getIndeks() {return klasa_indeks;}
+        string getImie() {return klasa_imie;}
+        string getNazwisko() {return klasa_nazwisko;}
+       
+        virtual void drukuj(){cout<<"Osoba "<<klasa_imie<<" "<<klasa_nazwisko<<endl;}
+};
+
+class Student : public Osoba
+{
+    protected:
+        string klasa_kierunek;
+        int klasa_semestr;
+        
+    public:
+        Student(int id=0, string im="", string nazw="", string kier="", int sem=0) 
+            : Osoba(id, im,nazw), klasa_kierunek(kier),klasa_semestr(sem) {}
+        virtual ~Student () {}
+
+        void setKierunek(string nowy_kierunek) {klasa_kierunek=nowy_kierunek;}
+        void setSemestr(int nowy_sem) {klasa_semestr=nowy_sem;}
+
+        string getKierunek() {return klasa_kierunek; }
+        int getSemestr() {return klasa_semestr;}
+        
+        virtual void drukuj(){cout<<"Student"<<klasa_imie<<" "<<klasa_nazwisko<<" "<<klasa_kierunek<<" "<<klasa_semestr<<endl;}
+};
+
+class StudentZaoczny : public Student 
+{
+    public:
+        virtual void drukuj(){cout<<"Student zaoczny"<<klasa_imie<<" "<<klasa_nazwisko<<" "<<klasa_kierunek<<" "<<klasa_semestr<<endl;}
+};
+
+class Pracownik : public Osoba 
+{
+    protected:
+        string klasa_tytul_naukowy;
+        string klasa_przedmiot;
+        
+    public:
+        void setTytul(string nowy_tytul) {klasa_tytul_naukowy=nowy_tytul;}
+        void setPrzedmiot(string nowy_przedmiot) {klasa_przedmiot=nowy_przedmiot;}
+
+        string getTytul() { return klasa_tytul_naukowy;}
+        string getPrzedmiot() { return klasa_przedmiot;}
+        
+        virtual void drukuj(){cout<<"Pracownik "<<klasa_tytul_naukowy<<" "<<klasa_imie<<" "<<klasa_nazwisko<<" "<<klasa_przedmiot<<endl;}
+};
+
+class ListaObecnosci 
+{
+    bool klasa_tab_obecnosc[10];
+    Osoba klasa_tab_osob[10];
+
+    int znajdzPusteMiejsce() 
+    {
+        for(int i=0;klasa_tab_osob[i].getNazwisko()==""; i++) 
+        {
+            return i;
+        }
+        return -1;
+    }
+
+    int znajdzOsobe(string nazwisko) 
+    {
+        for (int i=0; klasa_tab_osob[i].getNazwisko()==nazwisko;i++) 
+        {
+            return i;
+        }
+        return -1;
+    }
+
+public:
+    void dodajOsobe(Osoba nowa_osoba) 
+    {
+        int i=znajdzPusteMiejsce();
+        if (i!=-1) klasa_tab_osob[i]=nowa_osoba;
+    }
+
+    void drukujListe() 
+    {
+        for (int i=0;klasa_tab_osob[i].getNazwisko()!=""; i++) 
+        {
+            cout <<"Nr ideksu: "<<klasa_tab_osob[i].getIndeks()<<" Imie: " <<klasa_tab_osob[i].getImie() <<" Nazwisko: "<<klasa_tab_osob[i].getNazwisko()<< " obecnosc: "<<klasa_tab_obecnosc[i]<<endl;
+        }
+    }
+
+    void ustawObecnosc(string nazwisko, bool nowa_obecnosc) {
+        int i=znajdzOsobe(nazwisko);
+        if (i!=-1) 
+        {
+            int j=znajdzPusteMiejsce();
+            klasa_tab_osob[j]=klasa_tab_osob[i];
+            klasa_tab_obecnosc[j]=nowa_obecnosc;
+            cout<<"Obecnosc ustawiona"<<endl;
+        }
+    }
+};
+
+class UiUzyt {
+    Osoba *klasa_tablica_osob;
+    ListaObecnosci *klasa_tablica_list;
+    int klasa_ile_osob, klasa_ile_list;
+    int klasa_wybor;
+
+    int znajdzPuste() 
+    {
+        for (int i = 0; i < klasa_ile_osob; i++) 
+        {
+            if (klasa_tablica_osob[i].getNazwisko().empty()) 
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    int znajdzNazwisko(string nazwisko) 
+    {
+        for (int i=0; i<klasa_ile_osob;i++) 
+        {
+            if (klasa_tablica_osob[i].getNazwisko()==nazwisko) 
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    void utworzOsobe() 
+    {
+        int indeks;
+        string imie;
+        string nazwisko;
+        Osoba nowa_osoba;
+
+        cout<<"Podaj indeks: "<<endl;
+        cin>>indeks;
+        nowa_osoba.setIndeks(indeks);
+
+        cout<<"Podaj imie: "<<endl;
+        cin>>imie;
+        nowa_osoba.setImie(imie);
+
+        cout<<"Podaj nazwisko: "<<endl;
+        cin>>nazwisko;
+        nowa_osoba.setNazwisko(nazwisko);
+
+        int i=znajdzPuste();
+        if (i!=-1) klasa_tablica_osob[i]=nowa_osoba;
+    }
+
+    void dodajOsobe() 
+    {
+        string nazwisko;
+        int lista;
+        
+        cout<<"Nazwisko osoby: "<<endl;
+        cin>>nazwisko;
+
+        cout<<"wybierz liste: "<<endl;
+        cin>>lista;
+        
+        int i=znajdzNazwisko(nazwisko);
+        if(i!=-1) klasa_tablica_list[lista].dodajOsobe(klasa_tablica_osob[i]);
+    }
+
+    void ustawObecnosc() 
+    {
+        string nazwisko;
+        int lista;
+        bool obecnosc;
+
+        cout<<"POdaj nazwisko osoby: "<<endl;
+        cin>>nazwisko;
+
+        cout<<"podaj liste: "<<endl;
+        cin>>lista;
+
+        cout<<"podaj obecnosc: "<<endl;
+        cin>>obecnosc;
+
+        klasa_tablica_list[lista].ustawObecnosc(nazwisko, obecnosc);
+    }
+
+    void przesun(int index) 
+    {
+        for (int i=index; i<klasa_ile_osob-1; i++) 
+        {
+            klasa_tablica_osob[i].setIndeks(klasa_tablica_osob[i+1].getIndeks());
+            klasa_tablica_osob[i].setNazwisko(klasa_tablica_osob[i+1].getNazwisko());
+            klasa_tablica_osob[i].setImie(klasa_tablica_osob[i+1].getImie());
+        }
+        klasa_tablica_osob[klasa_ile_osob-1].setIndeks(0);
+        klasa_tablica_osob[klasa_ile_osob-1].setNazwisko("");
+        klasa_tablica_osob[klasa_ile_osob-1].setImie("");
+    }
+
+    void usunOsobe() 
+    {
+        string nazwisko;
+        cout<<"Podaj nazwisko osoby do usuniecia: "<<endl;
+        cin>>nazwisko;
+
+        int i=znajdzNazwisko(nazwisko);
+        if(i!=-1) przesun(i);
+    }
+
+    void edytujOsobe() 
+    {
+        string nazwisko;
+        int nowy_indeks;
+        string nowe_nazwisko;
+        string nowe_imie;
+
+        cout<<"Podaj nazwisko osoby do edycji: "<<endl;
+        cin>>nazwisko;
+        
+        int i=znajdzNazwisko(nazwisko);
+        if(i!=-1) 
+        {
+            cout<<"Podaj nowy indeks: "<<endl;
+            cin>>nowy_indeks;
+            klasa_tablica_osob[i].setIndeks(nowy_indeks);
+
+            cout<<"Podaj nowe imie: "<<endl;
+            cin>>nowe_imie;
+            klasa_tablica_osob[i].setImie(nowe_imie);
+
+            cout<<"Podaj nowe nazwisko: "<<endl;
+            cin>>nowe_nazwisko;
+            klasa_tablica_osob[i].setNazwisko(nowe_nazwisko);
+        }
+    }
+
+    void wyswietlListe() 
+    {
+        int lista;
+        cout<<"Ktora liste chcesz wyswietlic?  "<<endl;
+        cin>>lista;
+
+        system("clear");
+        klasa_tablica_list[lista].drukujListe();
+    }
+
+public:
+    UiUzyt(Osoba *tabOs, int os, ListaObecnosci *tabLis, int lis) 
+        : klasa_tablica_osob(tabOs), klasa_ile_osob(os), klasa_tablica_list(tabLis), klasa_ile_list(lis) {}
+
+    void petla() 
+    {
+        bool menu=true;
+        while(menu) 
+        {
+            cout<<"Witaj w menu!"<<endl;
+             cout<<"wybierz co chcesz zrobic: 1 - utwórz osobe, 2 - dodaj osobe do listy, 3 - ustaw obecnosc na liscie, 4 - usun osobe z listy,"<<endl;
+             cout<<" 5 - wyswietl listy, 6 - edytuj dane osoby, 7 - opusc program"<<endl;
+            cin>>klasa_wybor;
+
+            system("clear");
+
+            switch(klasa_wybor) {
+                case 1: utworzOsobe(); system("clear"); break;
+                case 2: dodajOsobe(); system("clear"); break;
+                case 3: ustawObecnosc(); system("clear"); break;
+                case 4: usunOsobe(); system("clear"); break;
+                case 5: wyswietlListe(); break;
+                case 6: edytujOsobe(); system("clear"); break;
+                default: menu=false; break;
+            };
+        }
+    };
+};
+
+int main()
+{
+    Osoba tabOsoba[10];
+    ListaObecnosci listaOsob[2];
+    UiUzyt ui(tabOsoba, 10, listaOsob, 2);
+    ui.petla();
+
+    Osoba *tab[4];
+    Osoba os1;
+    Student st1;
+    Pracownik pr1;
+    StudentZaoczny st_za1;
+   
+    tab[0]=&os1;
+    tab[1]=&st1;
+    tab[2]=&pr1; 
+    tab[3]=&st_za1;
+   
+    tab[0]->drukuj();
+    tab[1]->drukuj();
+    tab[2]->drukuj();
+    tab[3]->drukuj();
+   
+    return 0;
+}
